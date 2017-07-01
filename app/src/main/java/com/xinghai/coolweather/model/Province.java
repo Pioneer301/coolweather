@@ -3,19 +3,19 @@ package com.xinghai.coolweather.model;
 
 public class Province {
     private int id;
-    private String ProvinceName;
-    private String ProvinceCode;
+    private String provinceName;
+    private String provinceCode;
 
     public int getId() {
         return id;
     }
 
     public String getProvinceName() {
-        return ProvinceName;
+        return provinceName;
     }
 
     public String getProvinceCode() {
-        return ProvinceCode;
+        return provinceCode;
     }
 
     public void setId(int id) {
@@ -23,10 +23,10 @@ public class Province {
     }
 
     public void setProvinceName(String provinceName) {
-        ProvinceName = provinceName;
+        this.provinceName = provinceName;
     }
 
     public void setProvinceCode(String provinceCode) {
-        ProvinceCode = provinceCode;
+        this.provinceCode = provinceCode;
     }
 }

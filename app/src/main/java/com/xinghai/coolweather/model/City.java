@@ -2,24 +2,24 @@ package com.xinghai.coolweather.model;
 
 public class City {
     private int id;
-    private String CityName;
-    private String CityCode;
-    private int ProvinceId;
+    private String cityName;
+    private String cityCode;
+    private int provinceId;
 
     public int getId() {
         return id;
     }
 
     public String getCityName() {
-        return CityName;
+        return cityName;
     }
 
     public String getCityCode() {
-        return CityCode;
+        return cityCode;
     }
 
     public int getProvinceId() {
-        return ProvinceId;
+        return provinceId;
     }
 
     public void setId(int id) {
@@ -27,14 +27,14 @@ public class City {
     }
 
     public void setCityName(String cityName) {
-        CityName = cityName;
+        this.cityName = cityName;
     }
 
     public void setCityCode(String cityCode) {
-        CityCode = cityCode;
+        this.cityCode = cityCode;
     }
 
     public void setProvinceId(int provinceId) {
-        ProvinceId = provinceId;
+        this.provinceId = provinceId;
     }
 }
