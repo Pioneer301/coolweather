@@ -48,6 +48,7 @@ public class CoolWeatherDB {
     public void saveProvince(Province province){
         if (province != null){
             ContentValues values = new ContentValues();
+            values.put("id",province.getId());
             values.put("province_name",province.getProvinceName());
             values.put("province_code",province.getProvinceCode());
             db.insert("Province",null,values);
@@ -75,6 +76,7 @@ public class CoolWeatherDB {
      */
     public void saveCity(City city){
         ContentValues values = new ContentValues();
+        values.put("id",city.getId());
         values.put("city_name",city.getCityName());
         values.put("city_code",city.getCityCode());
         values.put("province_id",city.getProvinceId());
@@ -83,44 +85,45 @@ public class CoolWeatherDB {
     /**
      * 从数据库读取全国所有城市信息
      */
-    public List<City> loadCity(){
+    public List<City> loadCity(int provinceId){
         List<City> list = new ArrayList<>();
-        Cursor cursor = db.query("City",null,"province_id = ?",new String[] {String.valueOf("provinceId")},null,null,null);
+        Cursor cursor = db.query("City",null,"province_id = ?",new String[] {String.valueOf(provinceId)},null,null,null);
         if (cursor.moveToFirst()){
             do {
                 City city = new City();
                 city.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
                 city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
-                city.setProvinceId(cursor.getInt(cursor.getColumnIndex("province_id")));
+                city.setProvinceId(provinceId);
                 list.add(city);
             }while(cursor.moveToNext());
         }
         return list;
     }
     /**
-     * 将City实例存储到数据库
+     * 将County实例存储到数据库
      */
     public void saveCounty(County county){
         ContentValues values = new ContentValues();
+        values.put("id",county.getId());
         values.put("county_name",county.getCountyName());
         values.put("county_code",county.getCountyCode());
         values.put("city_id",county.getCityId());
         db.insert("County",null,values);
     }
     /**
-     * 从数据库读取全国所有城市信息
+     * 从数据库读取全国所有县信息
      */
-    public List<County> loadCounty(){
+    public List<County> loadCounty(int cityId){
         List<County> list = new ArrayList<>();
-        Cursor cursor = db.query("County",null,"city_id = ?",new String[]{String.valueOf("cityId")},null,null,null);
+        Cursor cursor = db.query("County",null,"city_id = ?",new String[]{String.valueOf(cityId)},null,null,null);
         if (cursor.moveToFirst()){
             do {
                 County county = new County();
                 county.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
                 county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
-                county.setCityId(cursor.getInt(cursor.getColumnIndex("city_id")));
+                county.setCityId(cityId);
                 list.add(county);
             }while(cursor.moveToNext());
         }
