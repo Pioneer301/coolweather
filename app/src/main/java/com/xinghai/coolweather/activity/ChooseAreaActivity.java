@@ -3,18 +3,23 @@ package com.xinghai.coolweather.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xinghai.coolweather.R;
 import com.xinghai.coolweather.db.CoolWeatherDB;
 import com.xinghai.coolweather.model.City;
 import com.xinghai.coolweather.model.County;
 import com.xinghai.coolweather.model.Province;
+import com.xinghai.coolweather.util.HttpCallbackListener;
+import com.xinghai.coolweather.util.HttpUtil;
+import com.xinghai.coolweather.util.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +135,94 @@ public class ChooseAreaActivity extends Activity {
             queryFromServer(selectedCity.getCityCode(),"county");
         }
     }
-    private void queryFromServer(final String code, final String type) {
 
+    /**
+     * 根据传入的代号和类型从服务器上查询省市县数据
+     * @param code
+     * @param type
+     */
+    private void queryFromServer(final String code, final String type) {
+        String address;
+        if (!TextUtils.isEmpty(code)){
+            address = "http://www.weather.com.cn/data/list3/city"+code+".xml";
+        }else{
+            address = "http://www.weather.com.cn/data/list3/city.xml";
+        }
+        showProgressDialog();
+        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+            @Override
+            public void onFinish(String response) {
+                boolean result = false;
+                if ("province".equals(type)){
+                    result = Utility.handleProvincesResponse(coolWeatherDB,response);
+                }else if ("city".equals(type)){
+                    result = Utility.handleCitiesResponse(coolWeatherDB,response,selectedProvince.getId());
+                }else if ("county".equals(type)){
+                    result = Utility.handleCountiesResponse(coolWeatherDB,response,selectedCity.getId());
+                }
+                if (result){
+                    //通过runOnUiThread方法回到主线程处理逻辑
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            closeProgressDialog();
+                            if ("province".equals(type)){
+                                queryProvinces();
+                            }else if ("city".equals(type)){
+                                queryCities();
+                            }else if ("county".equals(type)){
+                                queryCounties();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                //通过runOnUiThread方法回到主线程处理逻辑
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeProgressDialog();
+                        Toast.makeText(ChooseAreaActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
+    /**
+     * 关闭进度对话框
+     */
+    private void closeProgressDialog() {
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
+    }
+
+    /**
+     * 显示进度对话框
+     */
+    private void showProgressDialog() {
+        if (progressDialog == null){
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("正在加载...");
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+        progressDialog.show();
+    }
+    /**
+     * 捕获back键，根据当前的级别来判断，此时应该返回市列表、省列表、还是直接退出
+     */
+    @Override
+    public void onBackPressed() {
+        if (currentLevel == LEVEL_COUNTY){
+            queryCities();
+        }else if (currentLevel == LEVEL_CITY){
+            queryProvinces();
+        }else {
+            finish();
+        }
+    }
 }
