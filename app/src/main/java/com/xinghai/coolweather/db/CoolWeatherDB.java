@@ -23,14 +23,12 @@ public class CoolWeatherDB {
     public static final int VERSION = 1;
     private static CoolWeatherDB coolWeatherDB;
     private SQLiteDatabase db;
-    private final CoolWeatherOpenHelper dbHelper;
-
     /**
      * 将构造方法私有化
      * @param context
      */
     private CoolWeatherDB(Context context) {
-        dbHelper = new CoolWeatherOpenHelper(context,DB_NAME,null, VERSION);
+        CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(context,DB_NAME,null, VERSION);
         db= dbHelper.getWritableDatabase();
     }
     /**
@@ -74,11 +72,13 @@ public class CoolWeatherDB {
      * 将City实例存储到数据库
      */
     public void saveCity(City city){
-        ContentValues values = new ContentValues();
-        values.put("city_name",city.getCityName());
-        values.put("city_code",city.getCityCode());
-        values.put("province_id",city.getProvinceId());
-        db.insert("City",null,values);
+        if (city != null){
+            ContentValues values = new ContentValues();
+            values.put("city_name",city.getCityName());
+            values.put("city_code",city.getCityCode());
+            values.put("province_id",city.getProvinceId());
+            db.insert("City",null,values);
+        }
     }
     /**
      * 从数据库读取全国所有城市信息
@@ -102,11 +102,13 @@ public class CoolWeatherDB {
      * 将County实例存储到数据库
      */
     public void saveCounty(County county){
-        ContentValues values = new ContentValues();
-        values.put("county_name",county.getCountyName());
-        values.put("county_code",county.getCountyCode());
-        values.put("city_id",county.getCityId());
-        db.insert("County",null,values);
+        if (county != null) {
+            ContentValues values = new ContentValues();
+            values.put("county_name",county.getCountyName());
+            values.put("county_code",county.getCountyCode());
+            values.put("city_id",county.getCityId());
+            db.insert("County",null,values);
+        }
     }
     /**
      * 从数据库读取全国所有县信息
