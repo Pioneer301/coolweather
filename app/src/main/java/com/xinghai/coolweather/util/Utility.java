@@ -1,6 +1,7 @@
 package com.xinghai.coolweather.util;
 
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.xinghai.coolweather.db.CoolWeatherDB;
@@ -72,5 +73,16 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    /**
+     * 解析服务器返回的JSON数据，并将解析出来的数据存储到本地
+     */
+    public static void handleWeatherResponse(Context context,String response){
+        try{
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
